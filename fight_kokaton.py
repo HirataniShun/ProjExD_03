@@ -133,11 +133,12 @@ class Bomb:
 
 class Explosion:  # 演習1　爆発エフェクト
     def __init__(self, bomb: Bomb):
+        self.img = pg.image.load("ex03/fig/explosion.gif") 
         self.imgs = [  # 上下左右に回転した爆発のエフェクト
-            pg.transform.flip(pg.image.load("ex03/fig/explosion.gif"), False, False),
-            pg.transform.flip(pg.image.load("ex03/fig/explosion.gif"), False, True),
-            pg.transform.flip(pg.image.load("ex03/fig/explosion.gif"), True, False),
-            pg.transform.flip(pg.image.load("ex03/fig/explosion.gif"), True, True)
+            pg.transform.flip(self.img, False, False),
+            pg.transform.flip(self.img, False, True),
+            pg.transform.flip(self.img, True, False),
+            pg.transform.flip(self.img, True, True)
         ]
         self.rct = bomb.rct  # 爆発した爆弾の位置に生成
         self.life = 20  # 爆発の表示時間
