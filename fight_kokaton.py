@@ -128,6 +128,21 @@ class Bomb:
         screen.blit(self.img, self.rct)
 
 
+class Explosion:  # 演習1　爆発エフェクト
+    def __init__(self, bomb: Bomb):
+        self.imgs = [  # 上下左右に回転した爆発のエフェクト
+            pg.transform.flip(pg.image.load("ex03/fig/explosion.gif"), False, False),
+            pg.transform.flip(pg.image.load("ex03/fig/explosion.gif"), False, True),
+            pg.transform.flip(pg.image.load("ex03/fig/explosion.gif"), True, False),
+            pg.transform.flip(pg.image.load("ex03/fig/explosion.gif"), True, True)
+        ]
+        self.rct = bomb.rct  # 爆発した爆弾の位置に生成
+        self.life = 20  # 爆発の表示時間
+    def update(self, screen: pg.Surface):
+        self.life -= 1
+        screen.blit(self.imgs[self.life % 4], self.rct)
+
+
 class Beam:  # ビームに関するクラス
     def __init__(self, bird: Bird):
         self.img = pg.image.load(f"{MAIN_DIR}/fig/beam.png")
@@ -153,6 +168,7 @@ def main():
     # BombがNUM個並んだリスト
     bombs = [Bomb() for _ in range(NUM_OF_BOMBS)]
     beam = None
+    explosions = []
 
     clock = pg.time.Clock()
     tmr = 0
@@ -177,12 +193,18 @@ def main():
             if beam is not None and beam.rct.colliderect(bomb.rct):
                 beam = None
                 bombs[i] = None
+                explosions.append(Explosion(bomb))
                 bird.change_img(6, screen)
         # Noneでない爆弾だけのリストを作る
         bombs = [bomb for bomb in bombs if bomb is not None]
+        # 
+        explosions = [explosion for explosion in explosions
+                      if explosion.life >= 0]
         
 
         key_lst = pg.key.get_pressed()
+        for explosion in explosions:
+            explosion.update(screen)
         bird.update(key_lst, screen)
         for bomb in bombs:
             bomb.update(screen)
@@ -190,7 +212,7 @@ def main():
             beam.update(screen)
         pg.display.update()
         tmr += 1
-        clock.tick(50)
+        clock.tick(30)
 
 
 if __name__ == "__main__":
