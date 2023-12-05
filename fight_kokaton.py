@@ -220,7 +220,6 @@ def main():
         # 
         explosions = [explosion for explosion in explosions
                       if explosion.life >= 0]
-        
 
         key_lst = pg.key.get_pressed()
         score.update(screen)
