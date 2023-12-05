@@ -2,6 +2,7 @@ import os
 import random
 import sys
 import time
+import math
 
 import pygame as pg
 
@@ -66,6 +67,7 @@ class Bird:
         self.img = self.imgs[(+5, 0)]  # 右向きこうかとんをデフォルト表示
         self.rct = self.img.get_rect()
         self.rct.center = xy
+        self.dire = (+5, 0)  # 演習2
 
     def change_img(self, num: int, screen: pg.Surface):
         """
@@ -92,6 +94,7 @@ class Bird:
             self.rct.move_ip(-sum_mv[0], -sum_mv[1])
         if not (sum_mv[0] == 0 and sum_mv[1] == 0):  # キーが押されてない場合ではない時
             self.img = self.imgs[tuple(sum_mv)]
+            self.dire = sum_mv  # 演習2
         screen.blit(self.img, self.rct)
 
 
@@ -147,9 +150,12 @@ class Beam:  # ビームに関するクラス
     def __init__(self, bird: Bird):
         self.img = pg.image.load(f"{MAIN_DIR}/fig/beam.png")
         self.rct = self.img.get_rect()
-        self.rct.centery = bird.rct.centery  # こうかとんの中心座標を取得
-        self.rct.centerx = bird.rct.centerx + bird.rct.width / 2
-        self.vx, self.vy = +5, 0
+        self.vx, self.vy = bird.dire[0], bird.dire[1]  # 演習2
+        self.rct.centery = bird.rct.centery + bird.rct.width * self.vy / 5 # こうかとんの中心座標を取得
+        self.rct.centerx = bird.rct.centerx + bird.rct.width * self.vx / 5
+        self.muki = math.atan2(-self.vy, self.vx)
+        self.muki = math.degrees(self.muki)
+        self.img = pg.transform.rotozoom(self.img, self.muki, 1.0)
 
     def update(self, screen: pg.Surface):
         """
