@@ -166,6 +166,18 @@ class Beam:  # ビームに関するクラス
         screen.blit(self.img, self.rct)
 
 
+class Score():
+    def __init__(self):
+        self.font = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
+        self.color = (0, 0, 255)
+        self.score = 0
+        self.img = self.font.render(f"スコア：{self.score}", 0, self.color)
+        self.rct = 100, HEIGHT - 50
+    def update(self, screen: pg.Surface):
+        self.img = self.font.render(f"スコア：{self.score}", 0, self.color)
+        screen.blit(self.img, self.rct)
+
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -173,6 +185,7 @@ def main():
     bird = Bird(3, (900, 400))
     # BombがNUM個並んだリスト
     bombs = [Bomb() for _ in range(NUM_OF_BOMBS)]
+    score = Score()
     beam = None
     explosions = []
 
@@ -199,6 +212,7 @@ def main():
             if beam is not None and beam.rct.colliderect(bomb.rct):
                 beam = None
                 bombs[i] = None
+                score.score += 1
                 explosions.append(Explosion(bomb))
                 bird.change_img(6, screen)
         # Noneでない爆弾だけのリストを作る
@@ -209,6 +223,7 @@ def main():
         
 
         key_lst = pg.key.get_pressed()
+        score.update(screen)
         for explosion in explosions:
             explosion.update(screen)
         bird.update(key_lst, screen)
